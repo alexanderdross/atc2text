@@ -252,7 +252,7 @@ final class LiveTranscriber {
 
         var geliefert = false
         var fehler: NSError?
-        konverter.convert(to: ausgabe, error: &fehler) { _, status in
+        _ = konverter.convert(to: ausgabe, error: &fehler) { _, status in
             if geliefert {
                 status.pointee = .noDataNow
                 return nil
