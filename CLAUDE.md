@@ -58,7 +58,8 @@ Erst wenn Phase 0 auf dem echten 15 Pro läuft (USB-Eingang wird erkannt, Transk
 
 - `docs/Konzept.md`: vollständiges Produktkonzept.
 - `docs/Umsetzungsplan.md`: technischer Plan mit API-Aufrufen und Datenmodell.
-- `Phase0/README.md`: Setup und Erfolgskriterien der Test-App.
+- `docs/Inbetriebnahme.md`: Schritt für Schritt von Branch zu laufender App auf dem iPhone.
+- `ATCRadioText/README.md`: Setup und Erfolgskriterien der Test-App.
 
 ## Repo-Struktur (Zielbild)
 
