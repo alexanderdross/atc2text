@@ -18,11 +18,24 @@ Rufzeichen-Filter, WhisperKit und die IFR/VFR-Klassifikation sind nicht Teil von
 
 ```
 ATCRadioText/
-  ATCPhase0App.swift    App-Einstieg, reine SwiftUI-App
-  LiveTranscriber.swift Audio-Capture plus SpeechAnalyzer-Transkription
-  ContentView.swift     Minimaloberflaeche: Eingang, Pegel, Transkript
-  Info.plist            enthaelt NSMicrophoneUsageDescription
+  ATCPhase0App.swift     App-Einstieg, reine SwiftUI-App
+  LiveTranscriber.swift  Audio-Capture plus SpeechAnalyzer-Transkription
+  ContentView.swift      Oberflaeche: Eingang, Pegel, Scratchpad-Textausgabe
+  ScratchpadDesign.swift Farb- und Schriftpalette der beiden Stile
+  Info.plist             enthaelt NSMicrophoneUsageDescription
 ```
+
+## Textausgabe im Scratchpad-Stil
+
+Die Textausgabe ist als Piloten-Scratchpad gestaltet. Zwei Stile:
+
+- CDU: avionischer Look, Monospace, gruen auf schwarz. Standard.
+- Notizblock: hellere Schreibblock-Optik mit roter Randlinie.
+
+Umgeschaltet wird in den Einstellungen (Zahnrad oben rechts). Die Auswahl
+bleibt ueber AppStorage erhalten. Sprecher-Kennung (ATC gegen eigene Sendung)
+und Rufzeichen-Hervorhebung sind im Zeilenmodell bereits vorgesehen, werden
+aber erst in Phase 1 mit Daten gefuellt.
 
 Das Xcode-Projekt liegt in `ATCRadioText.xcodeproj` im Wurzelverzeichnis.
 
