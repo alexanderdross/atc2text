@@ -37,6 +37,13 @@ bleibt ueber AppStorage erhalten. Sprecher-Kennung (ATC gegen eigene Sendung)
 und Rufzeichen-Hervorhebung sind im Zeilenmodell bereits vorgesehen, werden
 aber erst in Phase 1 mit Daten gefuellt.
 
+Weitere Schalter in den Einstellungen:
+
+- CRT-Scanlines: dezentes Zeilenraster, wirkt nur im CDU-Stil.
+- Beispieldaten anzeigen: blendet eine Beispiel-Mitschrift mit Sprecher-Kennung
+  und hervorgehobenem Rufzeichen ein. Nur zur Ansicht der Phase-1-Darstellung,
+  keine echte Transkription.
+
 Das Xcode-Projekt liegt in `ATCRadioText.xcodeproj` im Wurzelverzeichnis.
 
 ## Starten

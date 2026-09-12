@@ -8,10 +8,39 @@ import SwiftUI
 struct ContentView: View {
     @State private var transcriber = LiveTranscriber()
     @AppStorage("scratchpadStil") private var stilRoh: String = ScratchpadStil.cdu.rawValue
+    @AppStorage("crtEffekt") private var crtEffekt: Bool = true
+    @AppStorage("demoDaten") private var demoDaten: Bool = false
     @State private var zeigeEinstellungen = false
 
     private var stil: ScratchpadStil { ScratchpadStil(rawValue: stilRoh) ?? .cdu }
     private var design: ScratchpadDesign { .fuer(stil) }
+
+    /// Beispiel-Mitschrift zur Vorschau der Phase-1-Darstellung mit Sprecher und
+    /// Rufzeichen. Kein Live-Transkript.
+    private var demoZeilen: [Transkriptzeile] {
+        let jetzt = Date()
+        let roh: [(offset: TimeInterval, sprecher: Sprecher, text: String, rz: String?)] = [
+            (-196, .atc, "D-EABC, Langen Information, radar contact, QNH 1013", "D-EABC"),
+            (-190, .eigen, "QNH 1013, D-EABC", "D-EABC"),
+            (-165, .atc, "D-EABC, traffic 2 o'clock, 3 miles, opposite direction", "D-EABC"),
+            (-158, .eigen, "Looking for traffic, ABC", "ABC"),
+            (-96, .atc, "ABC, steigen Sie Flugflaeche 75, direkt KEMPTEN", "ABC"),
+            (-89, .eigen, "Climb FL75, direct KEMPTEN, ABC", "ABC"),
+            (-12, .atc, "D-EABC, contact Muenchen Radar 128.955, servus", "D-EABC")
+        ]
+        return roh.map { eintrag in
+            Transkriptzeile(
+                zeit: jetzt.addingTimeInterval(eintrag.offset),
+                text: eintrag.text,
+                sprecher: eintrag.sprecher,
+                rufzeichen: eintrag.rz
+            )
+        }
+    }
+
+    private var anzuzeigendeZeilen: [Transkriptzeile] {
+        demoDaten ? demoZeilen : transcriber.zeilen
+    }
 
     var body: some View {
         ZStack {
@@ -28,7 +57,7 @@ struct ContentView: View {
             .padding(.bottom, 12)
         }
         .sheet(isPresented: $zeigeEinstellungen) {
-            EinstellungenView(stilRoh: $stilRoh)
+            EinstellungenView(stilRoh: $stilRoh, crtEffekt: $crtEffekt, demoDaten: $demoDaten)
         }
     }
 
@@ -109,18 +138,23 @@ struct ContentView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    if transcriber.zeilen.isEmpty && transcriber.teilTranskript.isEmpty {
+                    if demoDaten {
+                        Text("Beispieldaten, keine Live-Aufnahme")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(design.akzent)
+                            .padding(.vertical, 8)
+                    } else if transcriber.zeilen.isEmpty && transcriber.teilTranskript.isEmpty {
                         Text("noch kein Text")
                             .font(design.schrift)
                             .foregroundStyle(design.gedaempft)
                             .padding(.vertical, 10)
                     }
 
-                    ForEach(transcriber.zeilen) { zeile in
+                    ForEach(anzuzeigendeZeilen) { zeile in
                         ZeileView(zeile: zeile, design: design)
                     }
 
-                    if !transcriber.teilTranskript.isEmpty {
+                    if !demoDaten, !transcriber.teilTranskript.isEmpty {
                         ZeileView(
                             zeile: Transkriptzeile(zeit: Date(), text: transcriber.teilTranskript),
                             design: design,
@@ -162,6 +196,11 @@ struct ContentView: View {
                         .frame(width: 2)
                         .padding(.leading, 34)
                 }
+            }
+        }
+        .overlay {
+            if stil == .cdu && crtEffekt {
+                ScanlineOverlay()
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -270,6 +309,8 @@ struct ZeileView: View {
 /// Einstellungen. Umschalten des Textausgabe-Stils.
 struct EinstellungenView: View {
     @Binding var stilRoh: String
+    @Binding var crtEffekt: Bool
+    @Binding var demoDaten: Bool
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -283,6 +324,19 @@ struct EinstellungenView: View {
                     }
                     .pickerStyle(.inline)
                 }
+
+                Section {
+                    Toggle("CRT-Scanlines", isOn: $crtEffekt)
+                } footer: {
+                    Text("Dezente Zeilenraster ueber der Ausgabe. Wirkt nur im CDU-Stil.")
+                }
+
+                Section {
+                    Toggle("Beispieldaten anzeigen", isOn: $demoDaten)
+                } footer: {
+                    Text("Zeigt eine Beispiel-Mitschrift mit Sprecher-Kennung und hervorgehobenem Rufzeichen. Nur zur Ansicht der spaeteren Phase-1-Darstellung, keine echte Transkription.")
+                }
+
                 Section {
                     Text("CDU ist die Standarddarstellung im avionischen Gruen. Notizblock ist die alternative, hellere Schreibblock-Optik.")
                         .font(.footnote)
@@ -296,6 +350,23 @@ struct EinstellungenView: View {
                 }
             }
         }
+    }
+}
+
+/// Dezente CRT-Scanlines fuer die CDU-Optik. Nur Zierde, ohne Interaktion.
+struct ScanlineOverlay: View {
+    var body: some View {
+        Canvas { kontext, groesse in
+            let abstand: CGFloat = 3
+            var y: CGFloat = 0
+            while y < groesse.height {
+                let linie = CGRect(x: 0, y: y, width: groesse.width, height: 1)
+                kontext.fill(Path(linie), with: .color(.black.opacity(0.16)))
+                y += abstand
+            }
+        }
+        .allowsHitTesting(false)
+        .blendMode(.multiply)
     }
 }
 
