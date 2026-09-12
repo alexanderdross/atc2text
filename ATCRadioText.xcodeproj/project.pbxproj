@@ -10,6 +10,7 @@
 		EE0000000000000000000001 /* ATCPhase0App.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000001 /* ATCPhase0App.swift */; };
 		EE0000000000000000000002 /* LiveTranscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000002 /* LiveTranscriber.swift */; };
 		EE0000000000000000000003 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000003 /* ContentView.swift */; };
+		EE0000000000000000000004 /* ScratchpadDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000005 /* ScratchpadDesign.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +18,7 @@
 		DD0000000000000000000001 /* ATCPhase0App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCPhase0App.swift; sourceTree = "<group>"; };
 		DD0000000000000000000002 /* LiveTranscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTranscriber.swift; sourceTree = "<group>"; };
 		DD0000000000000000000003 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DD0000000000000000000005 /* ScratchpadDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScratchpadDesign.swift; sourceTree = "<group>"; };
 		DD0000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -53,6 +55,7 @@
 				DD0000000000000000000001 /* ATCPhase0App.swift */,
 				DD0000000000000000000002 /* LiveTranscriber.swift */,
 				DD0000000000000000000003 /* ContentView.swift */,
+				DD0000000000000000000005 /* ScratchpadDesign.swift */,
 				DD0000000000000000000004 /* Info.plist */,
 			);
 			path = ATCRadioText;
@@ -130,6 +133,7 @@
 				EE0000000000000000000001 /* ATCPhase0App.swift in Sources */,
 				EE0000000000000000000002 /* LiveTranscriber.swift in Sources */,
 				EE0000000000000000000003 /* ContentView.swift in Sources */,
+				EE0000000000000000000004 /* ScratchpadDesign.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,8 +25,8 @@ final class LiveTranscriber {
 
     // MARK: Sichtbarer Zustand fuer die UI
 
-    /// Verkettete, endgueltige Transkriptteile.
-    private(set) var transkript: String = ""
+    /// Endgueltige Transkriptzeilen, aelteste zuerst.
+    private(set) var zeilen: [Transkriptzeile] = []
     /// Aktuell laufender, noch vorlaeufiger Teil.
     private(set) var teilTranskript: String = ""
     /// Spitzenpegel des Eingangs, 0 bis 1, fuer die Pegelanzeige.
@@ -225,11 +225,14 @@ final class LiveTranscriber {
     // MARK: Ergebnisverarbeitung
 
     private func verarbeiteErgebnis(text: String, endgueltig: Bool) {
+        let sauber = text.trimmingCharacters(in: .whitespacesAndNewlines)
         if endgueltig {
-            transkript += transkript.isEmpty ? text : " " + text
+            if !sauber.isEmpty {
+                zeilen.append(Transkriptzeile(zeit: Date(), text: sauber))
+            }
             teilTranskript = ""
         } else {
-            teilTranskript = text
+            teilTranskript = sauber
         }
     }
 
@@ -277,6 +280,23 @@ final class LiveTranscriber {
         }
         return min(spitze, 1)
     }
+}
+
+/// Sprecher einer Zeile. In Phase 0 immer nil, ab Phase 1 gesetzt (Modul C).
+enum Sprecher {
+    case atc
+    case eigen
+}
+
+/// Eine abgeschlossene Transkriptzeile.
+struct Transkriptzeile: Identifiable {
+    let id = UUID()
+    let zeit: Date
+    let text: String
+    /// Ab Phase 1: wer gesprochen hat.
+    var sprecher: Sprecher? = nil
+    /// Ab Phase 1: erkanntes eigenes Rufzeichen zum Hervorheben.
+    var rufzeichen: String? = nil
 }
 
 /// Fehlerfaelle der Phase-0-Transkription.
