@@ -5,9 +5,10 @@ name: Auto-Merge
 # genutzt und laeuft mit Schreibrechten, auch fuer PRs. Damit workflow_run
 # ausloest, muss diese Datei auf dem Default-Branch liegen.
 #
-# Verhalten: gemergt wird nur, wenn der gruene CI-Lauf zum aktuellen Kopf des PR
-# gehoert, der PR offen und kein Entwurf ist. Kein Review erzwungen. Wer ein
-# Review oder ein Label als zusaetzliche Bedingung will, siehe Hinweis unten.
+# Verhalten: gemergt wird nur, wenn der PR das Label "automerge" traegt, der
+# gruene CI-Lauf zum aktuellen Kopf des PR gehoert, der PR offen und kein Entwurf
+# ist. Kein Review erzwungen. Das Label "automerge" muss im Repo existieren und
+# am PR gesetzt sein.
 
 on:
   workflow_run:
@@ -33,6 +34,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const AUTOMERGE_LABEL = 'automerge';
             const run = context.payload.workflow_run;
             const { owner, repo } = context.repo;
 
@@ -56,6 +58,8 @@ jobs:
               });
               if (pr.state !== 'open') { core.info(`PR #${pr.number} nicht offen.`); continue; }
               if (pr.draft) { core.info(`PR #${pr.number} ist Entwurf, kein Merge.`); continue; }
+              const hatLabel = (pr.labels || []).some(l => l.name === AUTOMERGE_LABEL);
+              if (!hatLabel) { core.info(`PR #${pr.number} ohne Label "${AUTOMERGE_LABEL}", kein Merge.`); continue; }
               // Nur mergen, wenn der gruene Lauf zum aktuellen Kopf des PR gehoert.
               if (pr.head.sha !== run.head_sha) {
                 core.info(`PR #${pr.number}: neuerer Commit vorhanden, warte auf dessen CI.`);

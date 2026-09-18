@@ -108,12 +108,12 @@ die eigene Registrierung anpassen.
 - iOS-Build: baut das Projekt gegen die iOS-Simulator-SDK. Braucht Xcode 26 fuer
   die iOS-26-APIs.
 
-Auto-Merge (`.github/workflows/auto-merge.yml`): sobald der CI-Workflow fuer
-einen PR gruen ist, wird der PR automatisch per Squash gemergt, sofern der gruene
-Lauf zum aktuellen Kopf des PR gehoert und der PR kein Entwurf ist. Kein Review
-erzwungen. Damit der workflow_run ausloest, muss diese Datei auf dem
-Default-Branch liegen. Ein zusaetzliches Gate (Label oder Pflicht-Review) laesst
-sich im Skript oder ueber Branch-Protection ergaenzen.
+Auto-Merge (`.github/workflows/auto-merge.yml`): mit Label-Gate. Nur PRs, die das
+Label `automerge` tragen, werden automatisch per Squash gemergt, sobald der
+CI-Workflow gruen ist, der Lauf zum aktuellen Kopf des PR gehoert und der PR kein
+Entwurf ist. Kein Review erzwungen. Das Label `automerge` muss im Repo einmalig
+angelegt und am PR gesetzt werden. Damit der workflow_run ausloest, muss diese
+Datei auf dem Default-Branch liegen.
 
 Dependabot (`.github/dependabot.yml`) haelt die GitHub-Actions aktuell, monatlich,
 mit 14 Tagen Cooldown. Kommt in Phase 1 eine Swift-Package-Abhaengigkeit dazu
