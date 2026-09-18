@@ -59,6 +59,7 @@ Erst wenn Phase 0 auf dem echten 15 Pro läuft (USB-Eingang wird erkannt, Transk
 - `docs/Konzept.md`: vollständiges Produktkonzept.
 - `docs/Umsetzungsplan.md`: technischer Plan mit API-Aufrufen und Datenmodell.
 - `docs/Inbetriebnahme.md`: Schritt für Schritt von Branch zu laufender App auf dem iPhone.
+- `docs/CI-Runner.md`: self-hosted CI-Runner einrichten (Linux plus macOS).
 - `ATCRadioText/README.md`: Setup und Erfolgskriterien der Test-App.
 
 ## Repo-Struktur (Zielbild)
