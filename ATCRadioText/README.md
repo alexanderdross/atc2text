@@ -96,17 +96,18 @@ Details zur Herleitung stehen in `docs/Umsetzungsplan.md`.
 
 ## Qualitaetssicherung und CI
 
-GitHub Actions (`.github/workflows/ci.yml`), beide Jobs auf self-hosted Runnern,
-nicht auf GitHub-hosted. Voraussetzung ist mindestens ein self-hosted
-macOS-Runner mit Xcode 26 und git. Die Runner-Labels in der Workflow-Datei an
-die eigene Registrierung anpassen.
+GitHub Actions (`.github/workflows/ci.yml`), alle Jobs auf self-hosted Runnern,
+nicht auf GitHub-hosted. Runner-Verteilung:
 
-- Guardrails: prueft ohne Xcode die harten Konventionen (keine Gedankenstriche,
+- Guardrails: laeuft auf einem self-hosted Linux-Runner (zum Beispiel dem
+  Root-Server). Prueft ohne Xcode die harten Konventionen (keine Gedankenstriche,
   kein Netzwerkcode im Verarbeitungspfad, AVAudioSession im Modus .measurement,
-  NSMicrophoneUsageDescription vorhanden). BSD-grep-kompatibel, laeuft also auf
-  dem macOS-Runner mit. Lokal mit `bash scripts/ci/guardrails.sh`.
-- iOS-Build: baut das Projekt gegen die iOS-Simulator-SDK. Braucht Xcode 26 fuer
-  die iOS-26-APIs.
+  NSMicrophoneUsageDescription vorhanden). Lokal mit `bash scripts/ci/guardrails.sh`.
+- iOS-Build: baut das Projekt gegen die iOS-Simulator-SDK und braucht deshalb
+  einen self-hosted macOS-Runner mit Xcode 26. Ein Linux-Server kann den iOS-Build
+  nicht kompilieren.
+
+Runner-Labels in den Workflow-Dateien an die eigene Registrierung anpassen.
 
 Auto-Merge (`.github/workflows/auto-merge.yml`): mit Label-Gate. Nur PRs, die das
 Label `automerge` tragen, werden automatisch per Squash gemergt, sobald der
