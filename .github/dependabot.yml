@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Aktualisiert die im CI verwendeten GitHub-Actions.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 14
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"

@@ -93,3 +93,18 @@ geprueft und angepasst. Wesentliche Korrekturen:
   Tap-Puffer bei Bedarf mit `AVAudioConverter` gewandelt.
 
 Details zur Herleitung stehen in `docs/Umsetzungsplan.md`.
+
+## Qualitaetssicherung und CI
+
+GitHub Actions (`.github/workflows/ci.yml`) mit zwei Gates:
+
+- Guardrails: prueft ohne Xcode die harten Konventionen (keine Gedankenstriche,
+  kein Netzwerkcode im Verarbeitungspfad, AVAudioSession im Modus .measurement,
+  NSMicrophoneUsageDescription vorhanden). Laeuft lokal mit
+  `bash scripts/ci/guardrails.sh`.
+- iOS-Build: baut das Projekt auf einem macOS-Runner gegen die iOS-Simulator-SDK.
+  Braucht Xcode 26 fuer die iOS-26-APIs.
+
+Dependabot (`.github/dependabot.yml`) haelt die GitHub-Actions aktuell, monatlich,
+mit 14 Tagen Cooldown. Kommt in Phase 1 eine Swift-Package-Abhaengigkeit dazu
+(zum Beispiel WhisperKit), wird ein `swift`-Eintrag ergaenzt.

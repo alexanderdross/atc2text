@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  guardrails:
+    name: Konventionen und Guardrails
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guardrails ausfuehren
+        run: bash scripts/ci/guardrails.sh
+
+  build:
+    name: iOS-Build (Simulator)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode waehlen
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          # Braucht Xcode 26 fuer die iOS-26-SDK (SpeechAnalyzer, Foundation Models).
+          xcode-version: latest-stable
+      - name: Xcode-Version anzeigen
+        run: xcodebuild -version
+      - name: Bauen fuer iOS-Simulator
+        run: |
+          xcodebuild build \
+            -project ATCRadioText.xcodeproj \
+            -scheme ATCRadioText \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO
