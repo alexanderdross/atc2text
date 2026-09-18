@@ -22,7 +22,7 @@ jobs:
     name: Konventionen und Guardrails
     runs-on: [self-hosted, macOS]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Guardrails ausfuehren
         run: bash scripts/ci/guardrails.sh
 
@@ -30,7 +30,7 @@ jobs:
     name: iOS-Build (Simulator)
     runs-on: [self-hosted, macOS]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Xcode waehlen
         uses: maxim-lobanov/setup-xcode@v1
         with:
