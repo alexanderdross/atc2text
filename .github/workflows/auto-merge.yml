@@ -1,0 +1,72 @@
+name: Auto-Merge
+
+# Merged einen Pull Request automatisch, sobald der CI-Workflow gruen ist.
+# Bewusst als workflow_run: so wird die Workflow-Definition vom Default-Branch
+# genutzt und laeuft mit Schreibrechten, auch fuer PRs. Damit workflow_run
+# ausloest, muss diese Datei auf dem Default-Branch liegen.
+#
+# Verhalten: gemergt wird nur, wenn der gruene CI-Lauf zum aktuellen Kopf des PR
+# gehoert, der PR offen und kein Entwurf ist. Kein Review erzwungen. Wer ein
+# Review oder ein Label als zusaetzliche Bedingung will, siehe Hinweis unten.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: automerge-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: [self-hosted, macOS]
+    steps:
+      - name: PR mergen, wenn CI gruen
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const { owner, repo } = context.repo;
+
+            // PRs zum erfolgreichen CI-Lauf ermitteln.
+            let prs = run.pull_requests || [];
+            if (prs.length === 0) {
+              const { data } = await github.rest.pulls.list({
+                owner, repo, state: 'open',
+                head: `${owner}:${run.head_branch}`,
+              });
+              prs = data;
+            }
+            if (prs.length === 0) {
+              core.info('Kein offener PR zu diesem CI-Lauf gefunden.');
+              return;
+            }
+
+            for (const ref of prs) {
+              const { data: pr } = await github.rest.pulls.get({
+                owner, repo, pull_number: ref.number,
+              });
+              if (pr.state !== 'open') { core.info(`PR #${pr.number} nicht offen.`); continue; }
+              if (pr.draft) { core.info(`PR #${pr.number} ist Entwurf, kein Merge.`); continue; }
+              // Nur mergen, wenn der gruene Lauf zum aktuellen Kopf des PR gehoert.
+              if (pr.head.sha !== run.head_sha) {
+                core.info(`PR #${pr.number}: neuerer Commit vorhanden, warte auf dessen CI.`);
+                continue;
+              }
+              try {
+                await github.rest.pulls.merge({
+                  owner, repo, pull_number: pr.number, merge_method: 'squash',
+                });
+                core.info(`PR #${pr.number} gemergt.`);
+              } catch (e) {
+                core.warning(`PR #${pr.number} nicht gemergt: ${e.message}`);
+              }
+            }
