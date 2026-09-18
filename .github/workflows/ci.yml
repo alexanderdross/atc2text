@@ -1,5 +1,11 @@
 name: CI
 
+# Alle Jobs laufen auf self-hosted Runnern, nicht auf GitHub-hosted.
+# Voraussetzung: mindestens ein self-hosted macOS-Runner mit Xcode 26 und git.
+# Die Labels unten an die eigene Runner-Registrierung anpassen. Wer einen eigenen
+# self-hosted Linux-Runner hat, kann den Guardrails-Job auf [self-hosted, Linux]
+# umstellen, das Skript laeuft auf beiden.
+
 on:
   push:
   pull_request:
@@ -14,7 +20,7 @@ concurrency:
 jobs:
   guardrails:
     name: Konventionen und Guardrails
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - uses: actions/checkout@v4
       - name: Guardrails ausfuehren
@@ -22,7 +28,7 @@ jobs:
 
   build:
     name: iOS-Build (Simulator)
-    runs-on: macos-15
+    runs-on: [self-hosted, macOS]
     steps:
       - uses: actions/checkout@v4
       - name: Xcode waehlen

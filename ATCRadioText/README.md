@@ -96,14 +96,17 @@ Details zur Herleitung stehen in `docs/Umsetzungsplan.md`.
 
 ## Qualitaetssicherung und CI
 
-GitHub Actions (`.github/workflows/ci.yml`) mit zwei Gates:
+GitHub Actions (`.github/workflows/ci.yml`), beide Jobs auf self-hosted Runnern,
+nicht auf GitHub-hosted. Voraussetzung ist mindestens ein self-hosted
+macOS-Runner mit Xcode 26 und git. Die Runner-Labels in der Workflow-Datei an
+die eigene Registrierung anpassen.
 
 - Guardrails: prueft ohne Xcode die harten Konventionen (keine Gedankenstriche,
   kein Netzwerkcode im Verarbeitungspfad, AVAudioSession im Modus .measurement,
-  NSMicrophoneUsageDescription vorhanden). Laeuft lokal mit
-  `bash scripts/ci/guardrails.sh`.
-- iOS-Build: baut das Projekt auf einem macOS-Runner gegen die iOS-Simulator-SDK.
-  Braucht Xcode 26 fuer die iOS-26-APIs.
+  NSMicrophoneUsageDescription vorhanden). BSD-grep-kompatibel, laeuft also auf
+  dem macOS-Runner mit. Lokal mit `bash scripts/ci/guardrails.sh`.
+- iOS-Build: baut das Projekt gegen die iOS-Simulator-SDK. Braucht Xcode 26 fuer
+  die iOS-26-APIs.
 
 Dependabot (`.github/dependabot.yml`) haelt die GitHub-Actions aktuell, monatlich,
 mit 14 Tagen Cooldown. Kommt in Phase 1 eine Swift-Package-Abhaengigkeit dazu
