@@ -31,7 +31,7 @@ jobs:
     runs-on: [self-hosted, Linux]
     steps:
       - name: PR mergen, wenn CI gruen
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const AUTOMERGE_LABEL = 'automerge';
